@@ -32,6 +32,7 @@ public class AddReminder extends AppCompatActivity {
     //declare a calendar
     Calendar calendar;
 
+    DBHandler dbHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +75,8 @@ public class AddReminder extends AppCompatActivity {
                         calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
+
+        dbHandler = new DBHandler(this, null);
     }
 
     public void updateDueDate() {
@@ -120,10 +123,12 @@ public class AddReminder extends AppCompatActivity {
 
         if(title.trim().equals("") || date.trim().equals("") || type.trim().equals("")){
             //if any of the Strings are empty, display Please enter ... Toast
-            Toast.makeText(this, "Please enter a name, store, and date!", Toast.LENGTH_LONG).show();
-        } else {
-            //if none of the Strings are empty, display Shopping List Added Toast
-            Toast.makeText(this, "Shopping List Added!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Please enter a title, date, and type!", Toast.LENGTH_LONG).show();
+        }else {
+            //add reminder to database
+            dbHandler.addReminder(title, date, type);
+            //if none of the Strings are empty, display Reminder Added Toast
+            Toast.makeText(this, "Reminder Added!", Toast.LENGTH_LONG).show();
         }
     }
 
