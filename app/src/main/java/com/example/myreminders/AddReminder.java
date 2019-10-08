@@ -13,21 +13,29 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class AddReminder extends AppCompatActivity {
+public class AddReminder extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     Intent intent;
 
     //declare EditTexts
     EditText titleEditText;
     EditText dateEditText;
-    EditText typeEditText;
+
+    Bundle bundle;
+    long id;
+
+    Spinner typeSpinner;
+    String entry;
 
     //declare a calendar
     Calendar calendar;
@@ -44,7 +52,6 @@ public class AddReminder extends AppCompatActivity {
         //initial EditTexts
         titleEditText = findViewById(R.id.titleEditText);
         dateEditText = findViewById(R.id.dateEditText);
-        typeEditText = findViewById(R.id.typeEditText);
 
         //initialize the Calendar
         calendar = Calendar.getInstance();
@@ -75,6 +82,16 @@ public class AddReminder extends AppCompatActivity {
                         calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
+
+
+
+
+
+        typeSpinner = (Spinner) findViewById(R.id.typeSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.entries, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        typeSpinner.setAdapter(adapter);
+        typeSpinner.setOnItemSelectedListener(this);
 
         dbHandler = new DBHandler(this, null);
     }
@@ -119,17 +136,25 @@ public class AddReminder extends AppCompatActivity {
     // get data input in EditTExts and store it in Strings
         String title = titleEditText.getText().toString();
         String date = dateEditText.getText().toString();
-        String type = typeEditText.getText().toString();
 
-        if(title.trim().equals("") || date.trim().equals("") || type.trim().equals("")){
+        if(title.trim().equals("") || date.trim().equals("") || entry.trim().equals("")){
             //if any of the Strings are empty, display Please enter ... Toast
             Toast.makeText(this, "Please enter a title, date, and type!", Toast.LENGTH_LONG).show();
         }else {
             //add reminder to database
-            dbHandler.addReminder(title, date, type);
+            dbHandler.addReminder(title, date, entry);
             //if none of the Strings are empty, display Reminder Added Toast
             Toast.makeText(this, "Reminder Added!", Toast.LENGTH_LONG).show();
         }
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+        entry = adapterView.getItemAtPosition(position).toString();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+    }
 }

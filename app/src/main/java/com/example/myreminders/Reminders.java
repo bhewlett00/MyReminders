@@ -32,13 +32,14 @@ public class Reminders extends CursorAdapter {
 
         String date = cursor.getString(cursor.getColumnIndex("date"));
 
-            ((TextView) view.findViewById(R.id.typeTextView)).
+            ((TextView) view.findViewById(R.id.expiredTextView)).
                     setText("Expired ? " + isExpired(date));
+
     }
 
-    public boolean isExpired(String date) throws ParseException {
+    public boolean isExpired(String date)  {
         try{
-            if(new SimpleDateFormat("yyyy-MM-dd").parse(date).compareTo(new Date())>0)
+            if(new SimpleDateFormat("yyyy-MM-dd").parse(date).compareTo(new Date())<0)
                 return false;
             else
                 return true;

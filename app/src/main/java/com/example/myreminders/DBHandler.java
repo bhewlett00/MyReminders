@@ -57,7 +57,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return db.rawQuery("SELECT * FROM " + TABLE_REMINDERS, null);
     }
 
-    public String getReminderTitle(int id){
+    public String getReminderDate(int id){
 
         SQLiteDatabase db = getWritableDatabase();
 
@@ -69,8 +69,8 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursor.moveToFirst();
 
-        if(cursor.getString(cursor.getColumnIndex("title")) != null){
-            dbString = cursor.getString(cursor.getColumnIndex("title"));
+        if(cursor.getString(cursor.getColumnIndex("date")) != null){
+            dbString = cursor.getString(cursor.getColumnIndex("date"));
         }
 
         return dbString;

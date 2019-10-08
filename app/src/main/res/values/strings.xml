@@ -8,4 +8,11 @@
     <string name="type">Type</string>
     <string name="date">Date</string>
     <string name="title_activity_view_list">View List</string>
+    <string-array name="entries">
+        <item></item>
+        <item>School</item>
+        <item>Work</item>
+        <item>Personal</item>
+        <item>Medical</item>
+    </string-array>
 </resources>

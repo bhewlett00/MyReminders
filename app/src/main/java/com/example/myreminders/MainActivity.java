@@ -1,5 +1,7 @@
 package com.example.myreminders;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -8,6 +10,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
 
 import android.view.View;
 import android.view.Menu;
@@ -15,7 +18,11 @@ import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-public class MainActivity extends AppCompatActivity {
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     //delcare an intent
     Intent intent;
@@ -25,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     Reminders remindersAdapter;
 
     ListView remindersView;
+
+    String entry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +53,28 @@ public class MainActivity extends AppCompatActivity {
         remindersView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                //launching the ViewList Activity and sending it the id of the shopping list
-                intent = new Intent(MainActivity.this, ViewList.class);
-                intent.putExtra("_id", id);
-                startActivity(intent);
+                String date = dbHandler.getReminderDate((int) id);
+                try {
+                    if(new SimpleDateFormat("yyyy-MM-dd").parse(date).compareTo(new Date())<0){
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this);
+
+                        builder.setSmallIcon(R.mipmap.ic_launcher);
+                        builder.setContentTitle("My Reminders");
+                        builder.setContentText("Reminder is expired " + date);
+
+                        intent = new Intent(MainActivity.this, MainActivity.class);
+
+                        PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                        builder.setContentIntent(pendingIntent);
+
+                        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                        notificationManager.notify(2142, builder.build());
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -83,5 +110,15 @@ public class MainActivity extends AppCompatActivity {
         // intializing an Intent for the AddReminder Activty and starting it
         intent = new Intent(this, AddReminder.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+        entry = adapterView.getItemAtPosition(position).toString();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
     }
 }
